@@ -1,6 +1,7 @@
 name: Event base trigger
 on:
-    - issues 
+  issues:
+    types: [opened]
 jobs:
     info:
         runs-on: ubuntu-latest
