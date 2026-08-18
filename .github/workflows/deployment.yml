@@ -9,7 +9,7 @@ jobs:
       - uses: actions/checkout@v7
       - name: Build the Docker image
         run: | 
-             echo ${ date }
+             echo $GITHUB_ACTOR
              echo "Hi"
         
       
