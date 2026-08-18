@@ -1,0 +1,9 @@
+name: Event base trigger
+on:
+    - issues 
+jobs:
+    info:
+        runs-on: ubuntu-latest
+        steps:
+            - name: test
+              run: echo "${{ toJson(github.event)}}"
