@@ -25,5 +25,5 @@ jobs:
     - name: Build
       run: npm run build
     - name: Deployment
-      run: echo "Deploying...$PORT"
+      run: echo "Deploying...$PORT && ${{ secrets.PORT_QA }}"
 
