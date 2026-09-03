@@ -16,9 +16,11 @@ env:
   WORKFLOW_ENV: Production
 jobs:    
   producer:
+    environment: QA
     env: 
         JOBS_ENV: Staging
-        environment: QA
+        PORT: ${{ vars.PORT_QA }}
+        USERNAME: ${{ secrets.QA_DB_USERNAME }}
     runs-on: ubuntu-latest
     outputs:
         foo: ${{ steps.generate-foo.outputs.foo }}
@@ -34,8 +36,8 @@ jobs:
         echo "Hello World! $ENV"
         echo "foo=$foo" >> $GITHUB_OUTPUT
         echo "FOO=$foo" >> $GITHUB_ENV
-        echo ${{ vars.environment.PORT_QA }}
-        echo ${{ secrets.QA_DB_USERNAME }}
+        echo ${{ env.PORT }}
+        echo ${{ env.USERNAME }}
     - name: Inspect values inside producer
       run: | 
            echo "FOO (set via GITHUB_ENV): $FOO" 
