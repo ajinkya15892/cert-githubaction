@@ -15,34 +15,44 @@ on:
 env:
   WORKFLOW_ENV: Production
 jobs:    
-  Build:
+  producer:
     env: 
         JOBS_ENV: Staging
     runs-on: ubuntu-latest
+    outputs:
+        foo: ${{ steps.generate-foo.outputs.foo }}
     steps:
     - name: Say hello
+      id: generate-foo
       #env: 
         #ENV: Staging1
       run: |
+        foo=ajinkya
         echo "Hello World! $WORKFLOW_ENV"
         echo "Hello World! $JOBS_ENV"
         echo "Hello World! $ENV"
+        echo "foo=$foo" >> $GITHUB_OUTPUT
+        echo "FOO=$foo" >> $GITHUB_ENV
+    - name: Inspect values inside producer
+      run: | 
+           echo "FOO (set via GITHUB_ENV): $FOO
+           echo "foo (set via GITHUB_OUTPUT): ${{ steps.generate-foo.outputs.foo }}
 
-  say-hello-in-python:
+  consumer:
     runs-on: ubuntu-latest
     needs: 
-        - Build
+        - producer
     steps:
     - name: Say hello
       run: |
-        print("Hello World")
-        #print("Value is",ENV) #this will throw error because ENV is not defined in this scope
-      shell: python
+        echo "value from producer: ${{ needs.producer.outputs.foo}}"
+        echo "FOO in consumer: ${FOO: <UNSET>}"
+        
 
   say-hello-action:
     runs-on: ubuntu-latest
     needs: 
-        - say-hello-in-python
+        - consumer
     outputs:
         result: ${{ steps.say-hello-action.outputs.result }}
     steps:
