@@ -1,7 +1,91 @@
 name: Lint Test and Deploy
-on: 
- push:
-  branches: [ test  ]
+
+# All 33 events GitHub currently documents as workflow triggers.
+# Events marked [default-branch] only fire when this file exists on the
+# repository's default branch.
+on:
+  # --- Manual / external / scheduled ---
+  workflow_dispatch:          # [default-branch] manual run via UI, API, CLI
+    inputs:
+      logLevel:
+        description: 'Log level'
+        required: false
+        default: 'warning'
+        type: choice
+        options: [info, warning, debug]
+  repository_dispatch:        # [default-branch] triggered by REST API
+    types: [test_result]
+  schedule:                   # [default-branch] default branch only
+    - cron: '0 0 */25 8 *'
+  workflow_call:              # makes this workflow reusable by other workflows
+  workflow_run:               # [default-branch] chains off another workflow
+    workflows: [Event base trigger]
+    types: [requested, in_progress, completed]
+
+  # --- Code / refs ---
+  push:
+    branches: [ test ]
+  create:                     # branch or tag created
+  delete:                     # [default-branch] branch or tag deleted
+  gollum:                     # [default-branch] wiki page created or updated
+
+  # --- Pull requests ---
+  pull_request:
+    types: [opened, synchronize, reopened]
+  pull_request_target:        # [default-branch] SEE SECURITY NOTE BELOW
+    types: [opened, synchronize, reopened]
+  pull_request_review:
+    types: [submitted, edited, dismissed]
+  pull_request_review_comment:
+    types: [created, edited, deleted]
+  merge_group:                # PR added to a merge queue
+    types: [checks_requested]
+
+  # --- Checks / status ---
+  check_run:                  # [default-branch]
+    types: [created, rerequested, completed, requested_action]
+  check_suite:                # [default-branch]
+    types: [completed]
+  status:                     # [default-branch] commit status changed
+
+  # --- Issues / discussions / metadata ---
+  issues:                     # [default-branch]
+    types: [opened, edited, closed, reopened, labeled, unlabeled]
+  issue_comment:              # [default-branch] fires for issues AND PRs
+    types: [created, edited, deleted]
+  discussion:                 # [default-branch] public preview
+    types: [created, edited, answered]
+  discussion_comment:         # [default-branch] public preview
+    types: [created, edited, deleted]
+  label:                      # [default-branch] the label object itself
+    types: [created, edited, deleted]
+  milestone:                  # [default-branch] the milestone object itself
+    types: [created, opened, edited, closed, deleted]
+
+  # --- Release / packages / pages ---
+  release:
+    types: [published, unpublished, created, edited, deleted, prereleased, released]
+  registry_package:           # [default-branch] GitHub Packages
+    types: [published, updated]
+  page_build:                 # [default-branch] push to Pages publishing source
+
+  # --- Deployments ---
+  deployment:
+  deployment_status:          # 'inactive' state does not trigger
+  image_version:              # [default-branch] new image version available
+    names:
+      - '*'
+    versions:
+      - '*'
+
+  # --- Repository-level activity ---
+  branch_protection_rule:     # [default-branch]
+    types: [created, edited, deleted]
+  fork:                       # [default-branch]
+  public:                     # [default-branch] private -> public
+  watch:                      # [default-branch] repo starred
+    types: [started]
+
 env:
   PORT: 8080
 jobs:
@@ -15,7 +99,7 @@ jobs:
     - name: Use Node.js
       uses: actions/setup-node@v3
       with:
-        node-version: 24
+        node-version: '24'
     - name: Install dependencies
       run: npm ci
     - name: Lint
@@ -25,5 +109,6 @@ jobs:
     - name: Build
       run: npm run build
     - name: Deployment
-      run: echo "Deploying...$PORT && ${{ secrets.PORT_QA }}"
-
+      env:
+        PORT_QA: ${{ secrets.PORT_QA }}
+      run: echo "Deploying... $PORT $PORT_QA"
