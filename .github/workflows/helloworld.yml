@@ -36,6 +36,7 @@ jobs:
     - name: Say hello
       run: |
         print("Hello World")
+        print("Value is",ENV)
       shell: python
 
   say-hello-action:
