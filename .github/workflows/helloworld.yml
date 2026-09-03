@@ -1,15 +1,23 @@
 name: HelloWorld
 on: workflow_dispatch
+env:
+  ENV: Production
 jobs:    
   Build:
+    env: 
+        ENV: Staging
     runs-on: ubuntu-latest
     steps:
     - name: Say hello
+      env: 
+        ENV: Staging1
       run: |
-        echo "Hello World!"
+        echo "Hello World! $ENV"
 
   say-hello-in-python:
     runs-on: ubuntu-latest
+    needs: 
+        - Build
     steps:
     - name: Say hello
       run: |
@@ -18,6 +26,10 @@ jobs:
 
   say-hello-action:
     runs-on: ubuntu-latest
+    needs: 
+        - say-hello-in-python
+    outputs:
+        result: ${{ steps.say-hello-action.outputs.result }}
     steps:
     - uses: actions/hello-world-javascript-action@main
       with:
