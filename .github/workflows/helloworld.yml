@@ -1,17 +1,31 @@
 name: HelloWorld
-on: workflow_dispatch
+on: 
+  workflow_dispatch:
+  pull_request:
+    branches: [ main ]
+    types:
+      - opened
+      - synchronize
+      - reopened
+    paths:
+      - '**.py'
+      - '**.yml'
+      - "!*.txt"
+      - "!README.md"
 env:
-  ENV: Production
+  WORKFLOW_ENV: Production
 jobs:    
   Build:
     env: 
-        ENV: Staging
+        JOBS_ENV: Staging
     runs-on: ubuntu-latest
     steps:
     - name: Say hello
       env: 
         ENV: Staging1
       run: |
+        echo "Hello World! $WORKFLOW_ENV"
+        echo "Hello World! $JOBS_ENV"
         echo "Hello World! $ENV"
 
   say-hello-in-python:
