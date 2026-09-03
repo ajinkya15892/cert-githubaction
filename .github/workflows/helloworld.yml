@@ -21,8 +21,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Say hello
-      env: 
-        ENV: Staging1
+      #env: 
+        #ENV: Staging1
       run: |
         echo "Hello World! $WORKFLOW_ENV"
         echo "Hello World! $JOBS_ENV"
@@ -36,7 +36,7 @@ jobs:
     - name: Say hello
       run: |
         print("Hello World")
-        print("Value is",ENV)
+        #print("Value is",ENV) #this will throw error because ENV is not defined in this scope
       shell: python
 
   say-hello-action:
