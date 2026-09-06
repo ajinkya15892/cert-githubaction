@@ -9,5 +9,6 @@ jobs:
              echo "Hello World!"
              echo "Multi command"
       - name: Print GoodBye
-        run: echo "Done - Bye!"
+        run: |
+            sleep 5m && echo "Done - Bye!"
       
