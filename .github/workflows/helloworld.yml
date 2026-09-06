@@ -14,6 +14,14 @@ on:
       - "!README.md"
 env:
   WORKFLOW_ENV: Production
+
+# Workflow-level default: grant the GITHUB_TOKEN read-only access to repo
+# contents. None of these jobs push commits, create releases, or write to
+# the repo, so read-only is the least-privilege default (least-privilege
+# principle, tested under GH-200 "Secure and optimize automation").
+permissions:
+  contents: read
+
 jobs:    
   producer:
     environment: QA
@@ -64,3 +72,7 @@ jobs:
     - uses: actions/hello-world-javascript-action@main
       with:
         who-to-greet: 'Mona the Octocat'
+
+#Runnner are 3 types of runner : 
+#1. Github hosted,3rd party hosted,selfhosted.
+# Github Hosted runner : runs-on: ubuntu-24.04,windows-2022 & macos-14         
