@@ -4,12 +4,23 @@ on:
 jobs:   
   build:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: project
     steps:
     - uses: actions/checkout@v3
+    - name: Use Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '24'
+    - name: Load & Cache Dependencies
+      uses: ./.github/actions/cached-deps
     - name: Lint
       run: echo "Linting..."
     - name: Test
       run: echo "Testing..."
+    - name: Build
+      run: npm run build
     - name: Deploy
       run: echo "Deploying..."
 
