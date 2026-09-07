@@ -12,9 +12,11 @@ jobs:
     - name: Use Node.js
       uses: actions/setup-node@v3
       with:
-        node-version: '24'
+        node-version: '20'
     - name: Load & Cache Dependencies
       uses: ./.github/actions/cached-deps
+      with:
+        working-directory: project
     - name: Lint
       run: echo "Linting..."
     - name: Test
