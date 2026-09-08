@@ -3,7 +3,7 @@ description: "Load Dependency (npm)"
 inputs:
   working-directory:
     description: "Directory containing package.json / package-lock.json"
-    required: false
+    required: true
     default: "."
 runs:
   using: "composite"
